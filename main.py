@@ -1,4 +1,4 @@
-
+from random import randint
 class BoardException(Exception):
     pass
 
@@ -128,3 +128,77 @@ class Board:
         return False
     def begin(self):
         self.busy =[]
+
+
+class Player:
+    def __init__(self, board, enemy):
+        self.board = board
+        self.enemy = enemy
+
+    def ask(self):
+        raise NotImplementedError()
+
+    def move(self):
+        while True:
+            try:
+                target = self.ask()
+                repeat = self.enemy.shot(target)
+                return repeat
+            except BaseException as e:
+                print(e)
+
+
+class AI(Player):
+    def ask(self):
+        d = Dot(randint(0, 5), randint(0, 5))
+        print(f"Ход компьютера:{d.x + 1} {d.y + 1}")
+        return d
+
+class User(Player):
+    def ask(self):
+        while True:
+            cords = input("Ваш ход: ").split()
+
+            if len(cords) != 2:
+                print(" Введите две (2) координаты! ")
+                continue
+
+            x, y = cords
+
+            if not (x.isdigit()) or not (y.isdigit()):
+                print(" Введите числа! ")
+                continue
+
+            x, y = int(x), int(y)
+
+            return Dot(x - 1, y - 1)
+
+
+class Game:
+    def try_board(self):
+        lens = [3, 2, 2, 1, 1, 1, 1,]
+        board = Board(size = self.size)
+        attempts = 0
+        for l in lens:
+            while True:
+                attempts += 1
+                if attempts > 2000:
+                    return None
+                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), l, randint(0,1))
+                try:
+                    board.add_Sihp(ship)
+                    break
+                except BoardWrongShipException:
+                    pass
+        board.begin()
+        return board
+
+    def random_board(self):
+        board = None
+        while board is None:
+            board = self.try_board()
+        return board
+
+g = Game()
+g.size = 6
+print(g.try_board())
