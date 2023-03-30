@@ -203,4 +203,4 @@ g = Game()
 g.size = 6
 print(g.try_board())
 
-# 41:19
+# 41:19№
