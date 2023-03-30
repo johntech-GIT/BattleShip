@@ -123,7 +123,7 @@ class Board:
                     print("Корабль ранен!")
                     return True
 
-        self.field[d.x][d.y] = "."
+        self.field[d.x][d.y] = "T"
         print("Мимо!")
         return False
     def begin(self):
@@ -179,6 +179,7 @@ class User(Player):
 
 class Game:
     def __init__(self, size = 6):
+        self.lens = [3, 2, 2, 1, 1, 1, 1, ]
         self.size = size
         pl = self.random_board()
         co = self.random_board()
@@ -187,10 +188,9 @@ class Game:
         self.ai = AI(co, pl)
         self.us = User(pl, co)
     def try_board(self):
-        lens = [3, 2, 2, 1, 1, 1, 1,]
         board = Board(size = self.size)
         attempts = 0
-        for l in lens:
+        for l in self.lens:
             while True:
                 attempts += 1
                 if attempts > 2000:
@@ -216,16 +216,19 @@ class Game:
             board = self.try_board()
         return  board
 
+    def print_boards(self):
+        print("-" * 20)
+        print("Доска пользователя:")
+        print(self.us.board)
+        print("-" * 20)
+        print("Доска компьютера:")
+        print(self.ai.board)
+        print("-" * 20)
+
     def loop(self):
         num = 0
         while True:
-            print("-"*20)
-            print("Доска пользователя:")
-            print(self.us.board)
-            print("-" * 20)
-            print("Доска компьютера:")
-            print(self.ai.board)
-            print("-" * 20)
+            self.print_boards()
             if num % 2 == 0:
                 print("Ходит поьзователь!")
                 repeat = self.us.move()
@@ -236,11 +239,13 @@ class Game:
                 num -= 1
 
             if self.ai.board.defeat():
+                self.print_boards()
                 print("-"*20)
                 print("Пользователь выиграл!")
                 break
 
             if self.us.board.defeat():
+                self.print_boards()
                 print("-"*20)
                 print("Компьютер выиграл!")
                 break
